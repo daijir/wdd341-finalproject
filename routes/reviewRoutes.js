@@ -1,0 +1,17 @@
+const express = require('express');
+const router = express.Router();
+const reviewController = require('../controllers/reviewController.js');
+
+// GET all reviews for a book
+router.get('/books/:bookId/reviews', reviewController.getReviewsForBook);
+
+// POST a new review for a book
+
+
+// PUT to update a review
+
+
+// DELETE a review
+router.delete('/reviews/:reviewId', reviewController.deleteReview);
+
+module.exports = router;

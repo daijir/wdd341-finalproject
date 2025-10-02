@@ -1,0 +1,32 @@
+[
+  {
+    "author": "George Orwell",
+    "title": "1984",
+    "isbn": "978-0451524935",
+    "stock": 10
+  },
+  {
+    "author": "J.K. Rowling",
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "isbn": "978-0590353427",
+    "stock": 15
+  },
+  {
+    "author": "J.R.R. Tolkien",
+    "title": "The Hobbit",
+    "isbn": "978-0618260300",
+    "stock": 12
+  },
+  {
+    "author": "Harper Lee",
+    "title": "To Kill a Mockingbird",
+    "isbn": "978-0061120084",
+    "stock": 8
+  },
+  {
+    "author": "F. Scott Fitzgerald",
+    "title": "The Great Gatsby",
+    "isbn": "978-0743273565",
+    "stock": 7
+  }
+]
