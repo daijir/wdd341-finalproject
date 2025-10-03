@@ -6,7 +6,7 @@ const borrowController = require('../controllers/borrowController.js');
 router.get('/borrows', borrowController.getAllBorrows);
 
 // POST a new borrow record
-
+router.post('/borrows', borrowController.createBorrow);
 
 // PUT to update a borrow record
 router.put('/borrows/:borrowId', borrowController.updateBorrow);

@@ -11,7 +11,21 @@ exports.getReviewsForBook = async (req, res) => {
 };
 
 // POST a new review for a specific book
-
+exports.createReview = async (req, res) => {
+  const review = new Review({
+    bookId: req.params.bookId, // from URL
+    userId: req.body.userId, // from request body (or authenticated user)
+    rating: req.body.rating,
+    comment: req.body.comment,
+    reviewDate: new Date(),
+  });
+  try {
+    const newReview = await review.save();
+    res.status(201).json(newReview);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
 
 // PUT to update a review
 exports.updateReview = async (req, res) => {

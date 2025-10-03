@@ -28,6 +28,24 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// POST a new user
+exports.createUser = async (req, res) => {
+  const user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    // Em uma aplicação real, a senha deve ser criptografada (hashed) antes de salvar!
+    password: req.body.password,
+    role: req.body.role || 'user', // Default role to 'user'
+  });
+
+  try {
+    const newUser = await user.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 // PUT to update a user
 exports.updateUser = async (req, res) => {
   try {

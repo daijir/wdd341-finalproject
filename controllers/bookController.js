@@ -27,6 +27,28 @@ exports.getBookById = async (req, res) => {
   }
 };
 
+
+exports.createBook = async (req, res) => {
+  // Placeholder for authentication check (e.g., only admin can add books)
+  // if (!req.user.isAdmin) {
+  //   return res.status(403).json({ message: 'Forbidden' });
+  // }
+  const book = new Book({
+    title: req.body.title,
+    author: req.body.author,
+    genre: req.body.genre,
+    yearPublished: req.body.yearPublished,
+    copiesAvailable: req.body.copiesAvailable,
+  });
+
+  try {
+    const newBook = await book.save();
+    res.status(201).json(newBook);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 exports.updateBook = async (req, res) => {
   try {
     const book = await Book.findById(req.params.bookId);
