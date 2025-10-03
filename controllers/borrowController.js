@@ -19,6 +19,12 @@ exports.getAllBorrows = async (req, res) => {
 
 // POST a new borrow record
 exports.createBorrow = async (req, res) => {
+  const { bookId, userId } = req.body;
+
+  if (!bookId || !userId) {
+    return res.status(400).json({ message: 'Book ID and User ID are required.' });
+  }
+
   const borrow = new Borrow({
     userId: req.body.userId,
     bookId: req.body.bookId,
@@ -26,6 +32,7 @@ exports.createBorrow = async (req, res) => {
     // dueDate can be calculated, e.g., 2 weeks from now
     dueDate: new Date(new Date().setDate(new Date().getDate() + 14)),
   });
+
   try {
     const newBorrow = await borrow.save();
     res.status(201).json(newBorrow);
@@ -33,7 +40,6 @@ exports.createBorrow = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-
 
 // PUT to update a borrow record (e.g., return a book)
 
