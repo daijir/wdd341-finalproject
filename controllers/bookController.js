@@ -1,3 +1,4 @@
+const req = require('express/lib/request.js');
 const Book = require('../models/book.js');
 
 exports.getAllBooks = async (req, res) => {
@@ -26,6 +27,7 @@ exports.getBookById = async (req, res) => {
   }
 };
 
+
 exports.createBook = async (req, res) => {
   // Placeholder for authentication check (e.g., only admin can add books)
   // if (!req.user.isAdmin) {
@@ -46,6 +48,25 @@ exports.createBook = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+exports.updateBook = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.bookId);
+    if (book == null) {
+      return res.status(404).json({ message: 'Cannot find book' })
+    }
+    const updateData = {
+      author: req.body.author,
+      title: req.body.title,
+      isbn: req.body.isbn,
+      stock: req.body.stock
+    }
+    await Book.updateOne({ _id: req.params.bookId }, { $set: updateData })
+    res.json({ message: 'Updated Book' });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
 
 exports.deleteBook = async (req, res) => {
   // Placeholder for authentication check

@@ -9,6 +9,7 @@ router.get('/books/:bookId/reviews', reviewController.getReviewsForBook);
 router.post('/books/:bookId/reviews', reviewController.createReview);
 
 // PUT to update a review
+router.put('/reviews/:reviewId', reviewController.updateReview);
 
 // DELETE a review
 router.delete('/reviews/:reviewId', reviewController.deleteReview);

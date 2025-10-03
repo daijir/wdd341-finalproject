@@ -46,6 +46,24 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// PUT to update a user
+exports.updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (user == null) {
+      return res.status(404).json({ message: 'Cannot find user' });
+    }
+    const updateData = {
+      name: req.body.name,
+      email: req.body.email
+    };
+    await User.updateOne({ _id: req.params.userId }, { $set: updateData });
+    res.json({ message: 'Updated User' });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // DELETE a user
 exports.deleteUser = async (req, res) => {
   try {
