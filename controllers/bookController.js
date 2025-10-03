@@ -40,6 +40,7 @@ exports.updateBook = async (req, res) => {
       stock: req.body.stock
     }
     await Book.updateOne({ _id: req.params.bookId }, { $set: updateData })
+    res.json({ message: 'Updated Book' });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
