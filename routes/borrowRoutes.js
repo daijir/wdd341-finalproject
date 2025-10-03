@@ -9,7 +9,7 @@ router.get('/borrows', borrowController.getAllBorrows);
 
 
 // PUT to update a borrow record
-
+router.put('/borrows/:borrowId', borrowController.updateBorrow);
 
 // DELETE a borrow record
 router.delete('/borrows/:borrowId', borrowController.deleteBorrow);

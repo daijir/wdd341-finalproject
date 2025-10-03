@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const { connectToDb } = require('./mongodb/connection.js');
 const bookRoutes = require('./routes/bookRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
@@ -16,6 +15,11 @@ app.use('/', bookRoutes);
 app.use('/', userRoutes);
 app.use('/', reviewRoutes);
 app.use('/', borrowRoutes);
+
+// Main route
+app.use('/', (req, res) => {
+    res.send("Hello, this is a service for books!");
+});
 
 /*
     * Connect to MongoDB and start the server
