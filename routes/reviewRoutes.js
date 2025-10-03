@@ -6,10 +6,9 @@ const reviewController = require('../controllers/reviewController.js');
 router.get('/books/:bookId/reviews', reviewController.getReviewsForBook);
 
 // POST a new review for a book
-
+router.post('/books/:bookId/reviews', reviewController.createReview);
 
 // PUT to update a review
-
 
 // DELETE a review
 router.delete('/reviews/:reviewId', reviewController.deleteReview);
