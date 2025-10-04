@@ -5,8 +5,9 @@ const doc = {
         title: 'Library API',
         description: 'An API for managing a library system',
     },
-    host: 'localhost:3000',
-    schemes: ['http'],
+    host: 'wdd341-finalproject-li4n.onrender.com',
+    //host: 'localhost:3000',
+    schemes: ['https', 'http'],
 };
 
 const outputFile = './swagger.json';
