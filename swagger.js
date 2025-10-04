@@ -5,7 +5,7 @@ const doc = {
     title: "Library API",
     description: "An API for managing a library system",
   },
-  host: "https://wdd341-finalproject.onrender.com",
+  host: "wdd341-finalproject.onrender.com",
   schemes: ["https"],
 };
 
