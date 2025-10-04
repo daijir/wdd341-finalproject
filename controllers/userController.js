@@ -33,9 +33,8 @@ exports.createUser = async (req, res) => {
   const user = new User({
     name: req.body.name,
     email: req.body.email,
-    // Em uma aplicação real, a senha deve ser criptografada (hashed) antes de salvar!
     password: req.body.password,
-    role: req.body.role || 'user', // Default role to 'user'
+    role: req.body.role || 'user',
   });
 
   try {
