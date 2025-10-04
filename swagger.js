@@ -1,12 +1,12 @@
 const swaggerAuto = require('swagger-autogen')();
 
 const doc = {
-    info: {
-        title: 'Library API',
-        description: 'An API for managing a library system',
-    },
-    host: 'localhost:3000',
-    schemes: ['http'],
+  info: {
+    title: "Library API",
+    description: "An API for managing a library system",
+  },
+  host: "https://wdd341-finalproject.onrender.com",
+  schemes: ["https"],
 };
 
 const outputFile = './swagger.json';
