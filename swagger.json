@@ -5,10 +5,10 @@
     "description": "An API for managing a library system",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "https://wdd341-finalproject.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/books": {
