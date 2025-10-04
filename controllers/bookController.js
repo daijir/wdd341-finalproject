@@ -5,7 +5,7 @@ exports.getAllBooks = async (req, res) => {
   try {
     let books;
     if (req.query.author) {
-      books = await Book.find({ author: req.query.author });
+      books = await Book.find({ author: new RegExp(req.query.author, 'i') });
     } else {
       books = await Book.find();
     }
