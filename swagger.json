@@ -30,6 +30,48 @@
             "description": "Internal Server Error"
           }
         }
+      },
+      "post": {
+        "description": "Create a new book.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Lord of the Rings"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "J.R.R. Tolkien"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "Fantasy"
+                },
+                "yearPublished": {
+                  "type": "integer",
+                  "example": 1954
+                },
+                "copiesAvailable": {
+                  "type": "integer",
+                  "example": 5
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad Request" },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/books/{bookId}": {
