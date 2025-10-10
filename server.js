@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const session = require('express-session');
 require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
@@ -15,6 +16,19 @@ const uri = process.env.MONGO_URI;
 const app = express();
 const port = 3000;
 
+// Setting up session middleware
+app.use(session({
+    secret: process.env.GOOGLE_CLIENT_SECRET,
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 2, // 2 hours
+        secure: false, // Set to true if using HTTPS or false for HTTP
+        httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+        name: 'session', // Custom name for the session cookie
+    }
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,7 +40,7 @@ app.use('/', reviewRoutes);
 app.use('/', borrowRoutes);
 
 // Main route
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
     res.send("Hello, this is a service for books!");
 });
 
