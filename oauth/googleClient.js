@@ -48,7 +48,7 @@ async function googleCallback(req, res) {
     const oauth2 = google.oauth2({version: 'v2', auth: oauth2Client});
     const user = await oauth2.userinfo.get();
     const { email, given_name, family_name } = user.data;
-    console.log(`User signed in: ${given_name} ${family_name} (${email})`);
+    console.log('User signed in');
 
     // Set session variables.
     req.session.user = {
