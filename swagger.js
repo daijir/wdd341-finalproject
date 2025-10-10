@@ -5,7 +5,9 @@ const doc = {
         title: 'Library API',
         description: 'An API for managing a library system',
     },
-    host: 'localhost:3000',
+    host: 'localhost:3000', 
+    //host: 'didactic-engine-94x7q5wq9jr2x75q-3000.app.github.dev',
+    //schemes: ['https'],
     schemes: ['http'],
 };
 
