@@ -4,18 +4,18 @@ const router = express.Router();
 const bookController = require('../controllers/bookController.js');
 
 // GET all books
-router.get('/books', checkSession, bookController.getAllBooks);
+router.get('/', checkSession, bookController.getAllBooks);
 
 // POST a new book
-router.post('/books', bookController.createBook);
+router.post('/', bookController.createBook);
 
 // GET a single book by ID
-router.get('/books/:bookId', checkSession, bookController.getBookById);
+router.get('/:bookId', checkSession, bookController.getBookById);
 
 // Update a single book by ID
-router.put('/books/:bookId', checkUserRole, bookController.updateBook);
+router.put('/:bookId', checkUserRole, bookController.updateBook);
 
 // DELETE a book
-router.delete('/books/:bookId', checkUserRole, bookController.deleteBook);
+router.delete('/:bookId', checkUserRole, bookController.deleteBook);
 
 module.exports = router;

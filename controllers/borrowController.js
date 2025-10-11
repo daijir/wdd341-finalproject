@@ -11,7 +11,7 @@ exports.getAllBorrows = async (req, res) => {
       query.bookId = req.query.bookId;
     }
     const borrows = await Borrow.find(query);
-    res.json(borrows);
+    res.status(200).json(borrows);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -44,36 +44,29 @@ exports.createBorrow = async (req, res) => {
 // PUT to update a borrow record (e.g., return a book)
 exports.updateBorrow = async (req, res) => {
   try {
-    const borrow = await Borrow.findById(req.params.borrowId);
-    if (borrow == null) {
-      return res.status(404).json({ message: 'Cannot find borrow record' });
-    }
     const updateData = {
-      bookId: req.body.bookId,
-      userId: req.body.userId,
-      borrowedAt: req.body.borrowedAt,
-      returnedAt: req.body.returnedAt,
       status: req.body.status
     };
-    await Borrow.updateOne({ _id: req.params.borrowId }, { $set: updateData });
-    res.json({ message: 'Updated Borrow Record' });
+    const updatedBorrow = await Borrow.findByIdAndUpdate(req.params.borrowId, updateData, { new: true });
+
+    if (updatedBorrow == null) {
+      return res.status(404).json({ message: 'Cannot find borrow record' });
+    }
+    res.status(200).json(updatedBorrow);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
   }
 };
 
 // DELETE a borrow record
 exports.deleteBorrow = async (req, res) => {
   try {
-    const borrow = await Borrow.findById(req.params.borrowId);
-    if (borrow == null) {
+    const deletedBorrow = await Borrow.findByIdAndDelete(req.params.borrowId);
+    if (deletedBorrow == null) {
       return res.status(404).json({ message: 'Cannot find borrow record' });
     }
 
-    // Add authorization check here (e.g., only admin can delete)
-
-    await borrow.deleteOne();
-    res.json({ message: 'Deleted Borrow Record' });
+    res.status(200).json({ message: 'Deleted Borrow Record' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
