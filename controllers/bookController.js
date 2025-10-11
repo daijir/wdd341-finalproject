@@ -1,15 +1,14 @@
-const req = require('express/lib/request.js');
 const Book = require('../models/book.js');
 
 exports.getAllBooks = async (req, res) => {
   try {
     let books;
-    if (req.query.author) {
+    if (req.query && req.query.author) {
       books = await Book.find({ author: req.query.author });
     } else {
       books = await Book.find();
     }
-    res.json(books);
+    res.status(200).json(books);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -19,9 +18,9 @@ exports.getBookById = async (req, res) => {
   try {
     const book = await Book.findById(req.params.bookId);
     if (book == null) {
-      return res.status(404).json({ message: 'Cannot find book' });
+      return res.status(404).json({ message: 'Book not found' });
     }
-    res.json(book);
+    res.status(200).json(book);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -51,18 +50,18 @@ exports.createBook = async (req, res) => {
 
 exports.updateBook = async (req, res) => {
   try {
-    const book = await Book.findById(req.params.bookId);
-    if (book == null) {
-      return res.status(404).json({ message: 'Cannot find book' })
-    }
     const updateData = {
       author: req.body.author,
       title: req.body.title,
       isbn: req.body.isbn,
       stock: req.body.stock
+    };
+    const updatedBook = await Book.findByIdAndUpdate(req.params.bookId, updateData, { new: true });
+
+    if (updatedBook == null) {
+      return res.status(404).json({ message: 'Book not found' });
     }
-    await Book.updateOne({ _id: req.params.bookId }, { $set: updateData })
-    res.json({ message: 'Updated Book' });
+    res.status(200).json(updatedBook);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -74,13 +73,12 @@ exports.deleteBook = async (req, res) => {
   //   return res.status(403).json({ message: 'Forbidden' });
   // }
   try {
-    const book = await Book.findById(req.params.bookId);
-    if (book == null) {
-      return res.status(404).json({ message: 'Cannot find book' });
+    const deletedBook = await Book.findByIdAndDelete(req.params.bookId);
+    if (deletedBook == null) {
+      return res.status(404).json({ message: 'Book not found' });
     }
 
-    await book.deleteOne();
-    res.json({ message: 'Deleted Book' });
+    res.status(200).json({ message: 'Book deleted successfully' });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
