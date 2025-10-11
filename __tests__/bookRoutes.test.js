@@ -21,14 +21,14 @@ describe('Book Routes', () => {
         jest.clearAllMocks();
     });
 
-    describe('GET /', () => {
+    describe('GET /books', () => {
         it('should call checkSession and getAllBooks, and return a list of books', async () => {
             const mockBooks = [{ id: '1', title: 'Test Book' }];
             bookController.getAllBooks.mockImplementation((req, res) => {
                 res.status(200).json(mockBooks);
             });
 
-            const response = await request(app).get('/');
+            const response = await request(app).get('/books');
 
             expect(userController.checkSession).toHaveBeenCalledTimes(1);
             expect(bookController.getAllBooks).toHaveBeenCalledTimes(1);
@@ -37,7 +37,7 @@ describe('Book Routes', () => {
         });
     });
 
-    describe('POST /', () => {
+    describe('POST /books', () => {
         it('should call createBook and return the new book', async () => {
             const newBook = { title: 'New Book', author: 'Author' };
             const createdBook = { id: '2', ...newBook };
@@ -46,7 +46,7 @@ describe('Book Routes', () => {
             });
 
             const response = await request(app)
-                .post('/')
+                .post('/books')
                 .send(newBook);
 
             expect(bookController.createBook).toHaveBeenCalledTimes(1);
@@ -55,14 +55,14 @@ describe('Book Routes', () => {
         });
     });
 
-    describe('GET /:bookId', () => {
+    describe('GET /books/:bookId', () => {
         it('should call checkSession and getBookById, and return a single book', async () => {
             const mockBook = { id: '1', title: 'Single Book' };
             bookController.getBookById.mockImplementation((req, res) => {
                 res.status(200).json(mockBook);
             });
 
-            const response = await request(app).get('/1');
+            const response = await request(app).get('/books/1');
 
             expect(userController.checkSession).toHaveBeenCalledTimes(1);
             expect(bookController.getBookById).toHaveBeenCalledTimes(1);
@@ -75,14 +75,14 @@ describe('Book Routes', () => {
                 res.status(404).json({ message: 'Book not found' });
             });
 
-            const response = await request(app).get('/999');
+            const response = await request(app).get('/books/999');
 
             expect(response.status).toBe(404);
             expect(response.body).toEqual({ message: 'Book not found' });
         });
     });
 
-    describe('PUT /:bookId', () => {
+    describe('PUT /books/:bookId', () => {
         it('should call checkUserRole and updateBook, and return the updated book', async () => {
             const updatedData = { title: 'Updated Title' };
             const updatedBook = { id: '1', title: 'Updated Title' };
@@ -91,7 +91,7 @@ describe('Book Routes', () => {
             });
 
             const response = await request(app)
-                .put('/1')
+                .put('/books/1')
                 .send(updatedData);
 
             expect(userController.checkUserRole).toHaveBeenCalledTimes(1);
@@ -101,13 +101,13 @@ describe('Book Routes', () => {
         });
     });
 
-    describe('DELETE /:bookId', () => {
+    describe('DELETE /books/:bookId', () => {
         it('should call checkUserRole and deleteBook, and return a success message', async () => {
             bookController.deleteBook.mockImplementation((req, res) => {
                 res.status(200).json({ message: 'Book deleted successfully' });
             });
 
-            const response = await request(app).delete('/1');
+            const response = await request(app).delete('/books/1');
 
             expect(userController.checkUserRole).toHaveBeenCalledTimes(1);
             expect(bookController.deleteBook).toHaveBeenCalledTimes(1);
