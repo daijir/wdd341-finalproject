@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController.js');
 const { checkUserRole } = require('../controllers/userController.js');
+const { userValidationRules, validate } = require('../validators');
 
 // GET all users
 router.get('/users', checkUserRole, userController.getAllUsers);
@@ -10,10 +11,10 @@ router.get('/users', checkUserRole, userController.getAllUsers);
 router.get('/users/:userId', checkUserRole, userController.getUserById);
 
 // POST a new user
-router.post('/users', userController.createUser);
+router.post('/users', userValidationRules(), validate, userController.createUser);
 
 // PUT to update a user
-router.put('/users/:userId', checkUserRole, userController.updateUser);
+router.put('/users/:userId', checkUserRole, userValidationRules(), validate, userController.updateUser);
 
 // DELETE a user
 router.delete('/users/:userId', checkUserRole, userController.deleteUser);
