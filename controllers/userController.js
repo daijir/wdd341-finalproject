@@ -130,10 +130,10 @@ exports.checkUserRole = async function(req, res, next) {
     const user = await User.findOne({ email: req.session.user.email });
     const userRole = user.role;
     console.log('User role:', userRole);
-    if (userRole !== 'admin') {
-      return res.status(403).json({ message: 'Admin access required' });
-    } else if (userRole === 'admin') {
-      console.log('User has admin role');
+    if (userRole !== 'user') {
+      return res.status(403).json({ message: 'User access required' });
+    } else if (userRole === 'user') {
+      console.log('User has user role');
       next();
     }
   } catch (error) {

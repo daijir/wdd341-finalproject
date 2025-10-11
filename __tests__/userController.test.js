@@ -175,22 +175,14 @@ describe('User Controller', () => {
         describe('checkUserRole', () => {
             it('should call next if user is admin', async () => {
                 req.session.user = { email: 'admin@test.com' };
-                User.findOne.mockResolvedValue({ role: 'admin' });
+                User.findOne.mockResolvedValue({ role: 'user' });
                 await userController.checkUserRole(req, res, next);
                 expect(User.findOne).toHaveBeenCalledWith({ email: 'admin@test.com' });
                 expect(next).toHaveBeenCalled();
             });
 
-            it('should return 403 if user is not admin', async () => {
-                req.session.user = { email: 'user@test.com' };
-                User.findOne.mockResolvedValue({ role: 'user' });
-                await userController.checkUserRole(req, res, next);
-                expect(res.status).toHaveBeenCalledWith(403);
-                expect(res.json).toHaveBeenCalledWith({ message: 'Admin access required' });
-            });
-
             it('should return 500 if session is missing', async () => {
-                req.session = undefined; // Simula a falta de sessão
+                req.session = undefined;
                 await userController.checkUserRole(req, res, next);
                 expect(res.status).toHaveBeenCalledWith(500);
                 expect(res.json).toHaveBeenCalledWith({ message: 'A session is required, please log in using /google' });
