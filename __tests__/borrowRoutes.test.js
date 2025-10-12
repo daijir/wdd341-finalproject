@@ -14,6 +14,15 @@ jest.mock('../controllers/userController', () => ({
     checkUserRole: jest.fn((req, res, next) => next()),
 }));
 
+// Mock express-validator
+jest.mock('express-validator', () => ({
+    ...jest.requireActual('express-validator'),
+    validationResult: jest.fn(() => ({
+        isEmpty: () => true,
+        array: () => [],
+    })),
+}));
+
 const app = express();
 app.use(express.json());
 // Mounting routes on the /borrows prefix, as defined in server.js
@@ -22,6 +31,7 @@ app.use('/', borrowRoutes);
 describe('Borrow Routes', () => {
     afterEach(() => {
         jest.clearAllMocks();
+        require('express-validator').validationResult.mockImplementation(() => ({ isEmpty: () => true, array: () => [] }));
     });
 
     describe('GET /borrows', () => {
@@ -41,7 +51,7 @@ describe('Borrow Routes', () => {
     });
 
     describe('POST /borrows', () => {
-        it('should call checkSession and createBorrow, and return the new borrow record', async () => {
+        it('should call checkSession and createBorrow, and return the new borrow record with valid data', async () => {
             const newBorrowData = { userId: 'user1', bookId: 'book1' };
             const createdBorrow = { _id: 'newId', ...newBorrowData, borrowDate: new Date().toISOString() };
             borrowController.createBorrow.mockImplementation((req, res) => {
@@ -57,10 +67,33 @@ describe('Borrow Routes', () => {
             expect(response.status).toBe(201);
             expect(response.body).toEqual(createdBorrow);
         });
+
+        it('should return 422 if validation fails', async () => {
+            const newBorrowData = { userId: '', bookId: 'book1' }; // Invalid userId
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'userId', msg: 'User is required.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .post('/borrows')
+                .send(newBorrowData);
+
+            expect(userController.checkSession).toHaveBeenCalledTimes(1);
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(borrowController.createBorrow).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { userId: 'User is required.' }
+                ]
+            });
+        });
     });
 
     describe('PUT /borrows/:borrowId', () => {
-        it('should call checkSession and updateBorrow, and return a success message', async () => {
+        it('should call checkUserRole and updateBorrow, and return a success message with valid data', async () => {
             const updateData = { status: 'returned' };
             borrowController.updateBorrow.mockImplementation((req, res) => {
                 res.status(200).json({ message: 'Updated Borrow Record' });
@@ -74,6 +107,29 @@ describe('Borrow Routes', () => {
             expect(borrowController.updateBorrow).toHaveBeenCalledTimes(1);
             expect(response.status).toBe(200);
             expect(response.body).toEqual({ message: 'Updated Borrow Record' });
+        });
+
+        it('should return 422 if validation fails on update', async () => {
+            const updateData = { userId: '' }; // Assuming userId is required for update as well
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'userId', msg: 'User is required.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .put('/borrows/1')
+                .send(updateData);
+
+            expect(userController.checkUserRole).toHaveBeenCalledTimes(1);
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(borrowController.updateBorrow).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { userId: 'User is required.' }
+                ]
+            });
         });
     });
 

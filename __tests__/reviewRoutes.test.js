@@ -11,6 +11,15 @@ jest.mock('../controllers/userController', () => ({
     checkSession: jest.fn((req, res, next) => next()),
 }));
 
+// Mock express-validator
+jest.mock('express-validator', () => ({
+    ...jest.requireActual('express-validator'),
+    validationResult: jest.fn(() => ({
+        isEmpty: () => true,
+        array: () => [],
+    })),
+}));
+
 const app = express();
 app.use(express.json());
 app.use('/', reviewRoutes);
@@ -18,6 +27,7 @@ app.use('/', reviewRoutes);
 describe('Review Routes', () => {
     afterEach(() => {
         jest.clearAllMocks();
+        require('express-validator').validationResult.mockImplementation(() => ({ isEmpty: () => true, array: () => [] }));
     });
 
     describe('GET /books/:bookId/reviews', () => {
@@ -37,7 +47,7 @@ describe('Review Routes', () => {
     });
 
     describe('POST /books/:bookId/reviews', () => {
-        it('should call checkSession and createReview, and return the new review', async () => {
+        it('should call checkSession and createReview, and return the new review with valid data', async () => {
             const newReviewData = { rating: 4, comment: 'Good read.' };
             const createdReview = { _id: 'newId', ...newReviewData };
             reviewController.createReview.mockImplementation((req, res) => {
@@ -53,10 +63,33 @@ describe('Review Routes', () => {
             expect(response.status).toBe(201);
             expect(response.body).toEqual(createdReview);
         });
+
+        it('should return 422 if validation fails', async () => {
+            const newReviewData = { rating: 6, comment: 'Invalid rating.' }; // Invalid rating
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'rating', msg: 'Rating must be an integer between 1 and 5.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .post('/books/book123/reviews')
+                .send(newReviewData);
+
+            expect(userController.checkSession).toHaveBeenCalledTimes(1);
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(reviewController.createReview).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { rating: 'Rating must be an integer between 1 and 5.' }
+                ]
+            });
+        });
     });
 
     describe('PUT /reviews/:reviewId', () => {
-        it('should call checkSession and updateReview, and return the updated review', async () => {
+        it('should call checkSession and updateReview, and return the updated review with valid data', async () => {
             const updateData = { rating: 5 };
             const updatedReview = { _id: 'review1', rating: 5, comment: 'Good read.' };
             reviewController.updateReview.mockImplementation((req, res) => {
@@ -71,6 +104,29 @@ describe('Review Routes', () => {
             expect(reviewController.updateReview).toHaveBeenCalledTimes(1);
             expect(response.status).toBe(200);
             expect(response.body).toEqual(updatedReview);
+        });
+
+        it('should return 422 if validation fails on update', async () => {
+            const updateData = { comment: '' }; // Invalid comment
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'comment', msg: 'Comment is required.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .put('/reviews/review1')
+                .send(updateData);
+
+            expect(userController.checkSession).toHaveBeenCalledTimes(1);
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(reviewController.updateReview).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { comment: 'Comment is required.' }
+                ]
+            });
         });
     });
 

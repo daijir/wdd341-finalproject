@@ -7,9 +7,19 @@ const bookController = require('../controllers/bookController');
 const userController = require('../controllers/userController');
 
 jest.mock('../controllers/bookController');
+
 jest.mock('../controllers/userController', () => ({
     checkUserRole: jest.fn((req, res, next) => next()),
     checkSession: jest.fn((req, res, next) => next()),
+}));
+
+// Mock express-validator
+jest.mock('express-validator', () => ({
+    ...jest.requireActual('express-validator'),
+    validationResult: jest.fn(() => ({
+        isEmpty: () => true,
+        array: () => [],
+    })),
 }));
 
 const app = express();
@@ -19,6 +29,7 @@ app.use('/', bookRoutes);
 describe('Book Routes', () => {
     afterEach(() => {
         jest.clearAllMocks();
+        require('express-validator').validationResult.mockImplementation(() => ({ isEmpty: () => true, array: () => [] }));
     });
 
     describe('GET /books', () => {
@@ -38,7 +49,7 @@ describe('Book Routes', () => {
     });
 
     describe('POST /books', () => {
-        it('should call createBook and return the new book', async () => {
+        it('should call createBook and return the new book with valid data', async () => {
             const newBook = { title: 'New Book', author: 'Author' };
             const createdBook = { id: '2', ...newBook };
             bookController.createBook.mockImplementation((req, res) => {
@@ -46,12 +57,33 @@ describe('Book Routes', () => {
             });
 
             const response = await request(app)
-                .post('/books')
-                .send(newBook);
+                .post('/books');
 
             expect(bookController.createBook).toHaveBeenCalledTimes(1);
             expect(response.status).toBe(201);
             expect(response.body).toEqual(createdBook);
+        });
+
+        it('should return 422 if validation fails', async () => {
+            const newBook = { title: '', author: 'Author' }; // Invalid title
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'title', msg: 'Title is required.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .post('/books')
+                .send(newBook);
+
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(bookController.createBook).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { title: 'Title is required.' }
+                ]
+            });
         });
     });
 
@@ -83,7 +115,7 @@ describe('Book Routes', () => {
     });
 
     describe('PUT /books/:bookId', () => {
-        it('should call checkUserRole and updateBook, and return the updated book', async () => {
+        it('should call checkUserRole and updateBook, and return the updated book with valid data', async () => {
             const updatedData = { title: 'Updated Title' };
             const updatedBook = { id: '1', title: 'Updated Title' };
             bookController.updateBook.mockImplementation((req, res) => {
@@ -91,13 +123,34 @@ describe('Book Routes', () => {
             });
 
             const response = await request(app)
-                .put('/books/1')
-                .send(updatedData);
+                .put('/books/1');
 
             expect(userController.checkUserRole).toHaveBeenCalledTimes(1);
             expect(bookController.updateBook).toHaveBeenCalledTimes(1);
             expect(response.status).toBe(200);
             expect(response.body).toEqual(updatedBook);
+        });
+
+        it('should return 422 if validation fails on update', async () => {
+            const updatedData = { copiesAvailable: -1 }; // Invalid copiesAvailable
+            const mockErrors = {
+                isEmpty: () => false,
+                array: () => [{ param: 'copiesAvailable', msg: 'Copies available must be a non-negative integer.' }],
+            };
+            require('express-validator').validationResult.mockImplementation(() => mockErrors);
+
+            const response = await request(app)
+                .put('/books/1')
+                .send(updatedData);
+
+            expect(require('express-validator').validationResult).toHaveBeenCalledTimes(1);
+            expect(bookController.updateBook).not.toHaveBeenCalled();
+            expect(response.status).toBe(422);
+            expect(response.body).toEqual({
+                errors: [
+                    { copiesAvailable: 'Copies available must be a non-negative integer.' }
+                ]
+            });
         });
     });
 
