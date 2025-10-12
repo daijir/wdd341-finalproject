@@ -31,8 +31,6 @@ const borrowValidationRules = () => {
   return [
     body('userId').notEmpty().withMessage('User is required.'),
     body('bookId').notEmpty().withMessage('Book is required.'),
-    body('borrowDate').isISO8601().toDate().withMessage('Borrow date must be a valid date.'),
-    body('returnDate').optional().isISO8601().toDate().withMessage('Return date must be a valid date.'),
   ];
 };
 
