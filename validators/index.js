@@ -15,15 +15,12 @@ const bookValidationRules = () => {
   return [
     body('title').notEmpty().withMessage('Title is required.'),
     body('author').notEmpty().withMessage('Author is required.'),
-    body('genre').notEmpty().withMessage('Genre is required.'),
-    body('yearPublished').isInt().withMessage('Year published must be an integer.'),
     body('copiesAvailable').isInt({ min: 0 }).withMessage('Copies available must be a non-negative integer.'),
   ];
 };
 
 const reviewValidationRules = () => {
   return [
-    body('user').notEmpty().withMessage('User is required.'),
     body('book').notEmpty().withMessage('Book is required.'),
     body('rating').isInt({ min: 1, max: 5 }).withMessage('Rating must be an integer between 1 and 5.'),
     body('comment').notEmpty().withMessage('Comment is required.'),
