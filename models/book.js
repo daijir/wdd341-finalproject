@@ -3,8 +3,12 @@ const mongoose = require('mongoose');
 const bookSchema = new mongoose.Schema({
   author: String,
   title: String,
-  isbn: String,
-  stock: Number
+  genre: String,
+  yearPublished: Number,
+  copiesAvailable: {
+    type: Number,
+    min: 0
+  }
 });
 
 module.exports = mongoose.model('Book', bookSchema);
