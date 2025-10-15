@@ -53,8 +53,9 @@ exports.updateBook = async (req, res) => {
     const updateData = {
       author: req.body.author,
       title: req.body.title,
-      isbn: req.body.isbn,
-      stock: req.body.stock
+      genre: req.body.genre,
+      yearPublished: req.body.yearPublished,
+      copiesAvailable: req.body.copiesAvailable
     };
     const updatedBook = await Book.findByIdAndUpdate(req.params.bookId, updateData, { new: true });
 
