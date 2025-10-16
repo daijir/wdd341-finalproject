@@ -8,15 +8,15 @@ const { bookValidationRules, validate } = require('../validators');
 router.get('/books', checkSession, bookController.getAllBooks);
 
 // POST a new book
-router.post('/books', bookValidationRules(), validate, bookController.createBook);
+router.post('/books', checkSession, bookValidationRules(), validate, bookController.createBook);
 
 // GET a single book by ID
 router.get('/books/:bookId', checkSession, bookController.getBookById);
 
 // Update a single book by ID
-router.put('/books/:bookId', checkUserRole, bookValidationRules(), validate, bookController.updateBook);
+router.put('/books/:bookId', checkSession, checkUserRole, bookValidationRules(), validate, bookController.updateBook);
 
 // DELETE a book
-router.delete('/books/:bookId', checkUserRole, bookController.deleteBook);
+router.delete('/books/:bookId', checkSession, checkUserRole, bookController.deleteBook);
 
 module.exports = router;

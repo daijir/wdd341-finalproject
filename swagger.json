@@ -5,7 +5,7 @@
     "description": "An API for managing a library system",
     "version": "1.0.0"
   },
-  "host": "wdd341-finalproject-li4n.onrender.com",
+  "host": "didactic-engine-94x7q5wq9jr2x75q-3000.app.github.dev",
   "basePath": "/",
   "schemes": [
     "https",
@@ -122,10 +122,13 @@
                 "title": {
                   "example": "any"
                 },
-                "isbn": {
+                "genre": {
                   "example": "any"
                 },
-                "stock": {
+                "yearPublished": {
+                  "example": "any"
+                },
+                "copiesAvailable": {
                   "example": "any"
                 }
               }
@@ -211,9 +214,6 @@
                   "example": "any"
                 },
                 "email": {
-                  "example": "any"
-                },
-                "password": {
                   "example": "any"
                 },
                 "role": {
@@ -447,19 +447,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "bookId": {
-                  "example": "any"
-                },
-                "userId": {
-                  "example": "any"
-                },
                 "rating": {
                   "example": "any"
                 },
                 "comment": {
-                  "example": "any"
-                },
-                "createdAt": {
                   "example": "any"
                 }
               }
@@ -469,6 +460,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -591,18 +585,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "bookId": {
-                  "example": "any"
-                },
-                "userId": {
-                  "example": "any"
-                },
-                "borrowedAt": {
-                  "example": "any"
-                },
-                "returnedAt": {
-                  "example": "any"
-                },
                 "status": {
                   "example": "any"
                 }
@@ -613,6 +595,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "403": {
             "description": "Forbidden"

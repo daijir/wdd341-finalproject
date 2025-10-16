@@ -11,9 +11,9 @@ router.get('/borrows', checkSession, borrowController.getAllBorrows);
 router.post('/borrows', checkSession, borrowValidationRules(), validate, borrowController.createBorrow);
 
 // PUT to update a borrow record
-router.put('/borrows/:borrowId', checkUserRole, borrowValidationRules(), validate, borrowController.updateBorrow);
+router.put('/borrows/:borrowId', checkSession, checkUserRole, borrowValidationRules(), validate, borrowController.updateBorrow);
 
 // DELETE a borrow record
-router.delete('/borrows/:borrowId', checkUserRole, borrowController.deleteBorrow);
+router.delete('/borrows/:borrowId', checkSession, checkUserRole, borrowController.deleteBorrow);
 
 module.exports = router;

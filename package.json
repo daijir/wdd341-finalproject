@@ -16,7 +16,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "swagger": "node swagger.js"
   },
   "dependencies": {
